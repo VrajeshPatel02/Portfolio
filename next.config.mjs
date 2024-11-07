@@ -1,8 +1,9 @@
+// Use ES module syntax throughout
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export', // Specifies static export for Cloudflare Pages
-  // other Next.js configuration options
+  output: 'export',
 };
 
 export default nextConfig;

@@ -32,7 +32,7 @@ const BlurFade = ({
   const ref = useRef(null);
 
   // Ensure margin is passed as string or number, as expected by useInView
-  const inViewResult = useInView(ref, { once: true, margin: `${inViewMargin}` });
+  const inViewResult = useInView(ref, { once: true, margin: typeof inViewMargin === "string" ? inViewMargin : `${inViewMargin}px` });
 
   const isInView = !inView || inViewResult;
   const defaultVariants: Variants = {

@@ -5,8 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:cloudflare": "pnpm install && pnpm build",
     "start": "next start",
     "lint": "next lint"
+    
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.0.4",

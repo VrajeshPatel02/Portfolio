@@ -11,9 +11,6 @@ const nextConfig: NextConfig = {
       hostname: 'shadcnblocks.com'
     }]
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  }
 };
 
 export default nextConfig;

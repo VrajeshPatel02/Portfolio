@@ -38,8 +38,8 @@ const Footer = () => {
           </span>
           <p className="text-xs">Available for work</p>
         </div>
-        <h2 className="font-sans-bold py-5 text-5xl text-center pb-8 tracking-wide">
-          Let&apos;s create your next big <br /> idea.
+        <h2 className="font-sans-bold py-5 text-3xl md:text-5xl text-center pb-8 tracking-wide">
+          Let&apos;s create your next big <br className="hidden md:block" /> idea.
         </h2>
         <button className="px-8 py-3 rounded-full border border-gray-400 text-md text-foreground hover:bg-foreground hover:text-background transition">
           Contact Me
@@ -47,7 +47,7 @@ const Footer = () => {
       </div>
       <div className="flex flex-row justify-between items-center py-4">
         <div className="pt-2 text-sm text-secondary">
-          © 2025 Vrajesh Patel. All rights reserved.
+          © 2026 Vrajesh Patel. All rights reserved.
         </div>
         <div className="flex flex-row gap-3 text-gray-500 group transition-colors ease-in-out duration-300">
           {socials.map((social, index) => {

@@ -10,7 +10,7 @@ const demoData: {features: FeatureItem[]} = {
       title: "Development",
       image: "/speciality/development.jpg",
       description:
-        "Building responsive websites. Providing the users an enriching experience that responds to any any device ans screen size.",
+        "Building responsive websites. Providing the users an enriching experience that responds to any device and screen size.",
       icon: 'CodeXml'
     },
     {
@@ -26,7 +26,7 @@ const demoData: {features: FeatureItem[]} = {
       title: "Branding",
       image: "/speciality/branding.jpg",
       description:
-        "Building brand identies working on logo, typography, iconography, colour palette, visual language, and brand personality.",
+        "Building brand identities working on logo, typography, iconography, colour palette, visual language, and brand personality.",
       icon: 'SwatchBook'
     }
   ],

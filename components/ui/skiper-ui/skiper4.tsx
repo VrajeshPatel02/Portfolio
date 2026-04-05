@@ -2,14 +2,21 @@
 
 import { motion } from "framer-motion";
 import { GripHorizontal, RefreshCcw } from "lucide-react";
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const Skiper4 = () => {
   const [scale, setScale] = useState(0);
   const [gap, setGap] = useState(0);
   const [flexDirection, setFlexDirection] = useState("row");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-5">
@@ -135,7 +142,7 @@ const Options = ({
               className="cursor-pointer text-sm opacity-50 hover:opacity-100"
               onClick={() => setFlexDirection("column")}
             >
-              coloumn
+              column
             </button>
             <button
               className="cursor-pointer text-sm opacity-50 hover:opacity-100"
@@ -150,36 +157,32 @@ const Options = ({
   );
 };
 
-//..................................................... //
+// Hook to handle component mount state and theme
+const useThemeStatus = () => {
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  const isDark = theme === "dark";
+  const toggleTheme = () => setTheme(isDark ? "light" : "dark");
+  return { mounted, isDark, toggleTheme };
+};
 
-export const ThemeToggleButton1 = ({
-  className = "",
-}: {
-  className?: string;
-}) => {
-  const [isDark, setIsDark] = useState(false);
+export const ThemeToggleButton1 = ({ className = "" }: { className?: string }) => {
+  const { mounted, isDark, toggleTheme } = useThemeStatus();
+  if (!mounted) return <div className={cn("size-8", className)} />;
+
   return (
     <button
       type="button"
-      className={cn(
-        "rounded-full bg-black text-white transition-all duration-300 active:scale-95",
-        className,
-      )}
-      onClick={() => setIsDark(!isDark)}
+      className={cn("rounded-full bg-black text-white transition-all duration-300 active:scale-95", className)}
+      onClick={toggleTheme}
     >
       <svg viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <motion.g
-          animate={{ rotate: isDark ? -180 : 0 }}
-          transition={{ ease: "easeInOut", duration: 0.35 }}
-        >
-          <path
-            d="M120 67.5C149.25 67.5 172.5 90.75 172.5 120C172.5 149.25 149.25 172.5 120 172.5"
-            fill="white"
-          />
-          <path
-            d="M120 67.5C90.75 67.5 67.5 90.75 67.5 120C67.5 149.25 90.75 172.5 120 172.5"
-            fill="black"
-          />
+        <motion.g animate={{ rotate: isDark ? -180 : 0 }} transition={{ ease: "easeInOut", duration: 0.35 }}>
+          <path d="M120 67.5C149.25 67.5 172.5 90.75 172.5 120C172.5 149.25 149.25 172.5 120 172.5" fill="white" />
+          <path d="M120 67.5C90.75 67.5 67.5 90.75 67.5 120C67.5 149.25 90.75 172.5 120 172.5" fill="black" />
         </motion.g>
         <motion.path
           animate={{ rotate: isDark ? 180 : 0 }}
@@ -192,53 +195,30 @@ export const ThemeToggleButton1 = ({
   );
 };
 
-//..................................................... //
 interface ThemeToggleButton2Props {
   className?: string;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-import { useTheme } from "next-themes";
+export const ThemeToggleButton2: React.FC<ThemeToggleButton2Props> = ({ className = "", onClick }) => {
+  const { mounted, isDark, toggleTheme } = useThemeStatus();
+  if (!mounted) return <div className={cn("size-8", className)} />;
 
-interface ThemeToggleButton2Props {
-  className?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-}
-
-export const ThemeToggleButton2: React.FC<ThemeToggleButton2Props> = ({
-  className = "",
-  onClick,
-}) => {
-  const { theme, setTheme } = useTheme();
-
-  // Determine if dark mode is active based on next-themes `theme` value
-  const isDark = theme === "dark";
-
-  // Handle click to toggle theme and possible external onClick
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setTheme(isDark ? "light" : "dark");
-    if (onClick) onClick(event);
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    toggleTheme();
+    if (onClick) onClick(e);
   };
 
   return (
     <button
       type="button"
-      className={cn(
-        "rounded-full transition-all duration-300 active:scale-95",
-        isDark ? "text-white" : "text-black",
-        className
-      )}
+      className={cn("rounded-full transition-all duration-300 active:scale-95", isDark ? "text-white" : "text-black", className)}
       onClick={handleClick}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        fill="currentColor"
-        strokeLinecap="round"
-        viewBox="0 0 32 32"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" strokeLinecap="round" viewBox="0 0 32 32">
         <clipPath id="skiper-btn-2">
           <motion.path
+            initial={{ y: isDark ? 10 : 0, x: isDark ? -12 : 0 }}
             animate={{ y: isDark ? 10 : 0, x: isDark ? -12 : 0 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             d="M0-5h30a1 1 0 0 0 9 13v24H0Z"
@@ -246,17 +226,16 @@ export const ThemeToggleButton2: React.FC<ThemeToggleButton2Props> = ({
         </clipPath>
         <g clipPath="url(#skiper-btn-2)">
           <motion.circle
+            r={isDark ? 10 : 8}
+            initial={{ r: isDark ? 10 : 8 }}
             animate={{ r: isDark ? 10 : 8 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             cx="16"
             cy="16"
           />
           <motion.g
-            animate={{
-              rotate: isDark ? -100 : 0,
-              scale: isDark ? 0.5 : 1,
-              opacity: isDark ? 0 : 1,
-            }}
+            initial={{ rotate: isDark ? -100 : 0, scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
+            animate={{ rotate: isDark ? -100 : 0, scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             stroke="currentColor"
             strokeWidth="1.5"
@@ -276,32 +255,20 @@ export const ThemeToggleButton2: React.FC<ThemeToggleButton2Props> = ({
   );
 };
 
-//..................................................... //
-export const ThemeToggleButton3 = ({
-  className = "",
-}: {
-  className?: string;
-}) => {
-  const [isDark, setIsDark] = useState(false);
+export const ThemeToggleButton3 = ({ className = "" }: { className?: string }) => {
+  const { mounted, isDark, toggleTheme } = useThemeStatus();
+  if (!mounted) return <div className={cn("size-8", className)} />;
+
   return (
     <button
       type="button"
-      className={cn(
-        "rounded-full transition-all duration-300 active:scale-95",
-        isDark ? "bg-black text-white" : "bg-white text-black",
-        className,
-      )}
-      onClick={() => setIsDark(!isDark)}
+      className={cn("rounded-full transition-all duration-300 active:scale-95", isDark ? "bg-black text-white" : "bg-white text-black", className)}
+      onClick={toggleTheme}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        fill="currentColor"
-        strokeLinecap="round"
-        viewBox="0 0 32 32"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" strokeLinecap="round" viewBox="0 0 32 32">
         <clipPath id="skiper-btn-3">
           <motion.path
+            initial={{ y: isDark ? 14 : 0, x: isDark ? -11 : 0 }}
             animate={{ y: isDark ? 14 : 0, x: isDark ? -11 : 0 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             d="M0-11h25a1 1 0 0017 13v30H0Z"
@@ -309,16 +276,16 @@ export const ThemeToggleButton3 = ({
         </clipPath>
         <g clipPath="url(#skiper-btn-3)">
           <motion.circle
+            r={isDark ? 10 : 8}
+            initial={{ r: isDark ? 10 : 8 }}
             animate={{ r: isDark ? 10 : 8 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             cx="16"
             cy="16"
           />
           <motion.g
-            animate={{
-              scale: isDark ? 0.5 : 1,
-              opacity: isDark ? 0 : 1,
-            }}
+            initial={{ scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
+            animate={{ scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             stroke="currentColor"
             strokeWidth="1.5"
@@ -331,54 +298,32 @@ export const ThemeToggleButton3 = ({
   );
 };
 
-//..................................................... //
-export const ThemeToggleButton4 = ({
-  className = "",
-}: {
-  className?: string;
-}) => {
-  const [isDark, setIsDark] = useState(false);
+export const ThemeToggleButton4 = ({ className = "" }: { className?: string }) => {
+  const { mounted, isDark, toggleTheme } = useThemeStatus();
+  if (!mounted) return <div className={cn("size-8", className)} />;
+
   return (
     <button
       type="button"
-      className={cn(
-        "rounded-full transition-all duration-300 active:scale-95",
-        isDark ? "bg-black text-white" : "bg-white text-black",
-        className,
-      )}
-      onClick={() => setIsDark(!isDark)}
+      className={cn("rounded-full transition-all duration-300 active:scale-95", isDark ? "bg-black text-white" : "bg-white text-black", className)}
+      onClick={toggleTheme}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        strokeWidth="0.7"
-        stroke="currentColor"
-        fill="currentColor"
-        strokeLinecap="round"
-        viewBox="0 0 32 32"
-      >
-        <path
-          strokeWidth="0"
-          d="M9.4 9.9c1.8-1.8 4.1-2.7 6.6-2.7 5.1 0 9.3 4.2 9.3 9.3 0 2.3-.8 4.4-2.3 6.1-.7.8-2 2.8-2.5 4.4 0 .2-.2.4-.5.4-.2 0-.4-.2-.4-.5v-.1c.5-1.8 2-3.9 2.7-4.8 1.4-1.5 2.1-3.5 2.1-5.6 0-4.7-3.7-8.5-8.4-8.5-2.3 0-4.4.9-5.9 2.5-1.6 1.6-2.5 3.7-2.5 6 0 2.1.7 4 2.1 5.6.8.9 2.2 2.9 2.7 4.9 0 .2-.1.5-.4.5h-.1c-.2 0-.4-.1-.4-.4-.5-1.7-1.8-3.7-2.5-4.5-1.5-1.7-2.3-3.9-2.3-6.1 0-2.3 1-4.7 2.7-6.5z"
-        />
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" strokeWidth="0.7" stroke="currentColor" fill="currentColor" strokeLinecap="round" viewBox="0 0 32 32">
+        <path strokeWidth="0" d="M9.4 9.9c1.8-1.8 4.1-2.7 6.6-2.7 5.1 0 9.3 4.2 9.3 9.3 0 2.3-.8 4.4-2.3 6.1-.7.8-2 2.8-2.5 4.4 0 .2-.2.4-.5.4-.2 0-.4-.2-.4-.5v-.1c.5-1.8 2-3.9 2.7-4.8 1.4-1.5 2.1-3.5 2.1-5.6 0-4.7-3.7-8.5-8.4-8.5-2.3 0-4.4.9-5.9 2.5-1.6 1.6-2.5 3.7-2.5 6 0 2.1.7 4 2.1 5.6.8.9 2.2 2.9 2.7 4.9 0 .2-.1.5-.4.5h-.1c-.2 0-.4-.1-.4-.4-.5-1.7-1.8-3.7-2.5-4.5-1.5-1.7-2.3-3.9-2.3-6.1 0-2.3 1-4.7 2.7-6.5z" />
         <path d="M19.8 28.3h-7.6" />
         <path d="M19.8 29.5h-7.6" />
         <path d="M19.8 30.7h-7.6" />
         <motion.path
-          animate={{
-            pathLength: isDark ? 0 : 1,
-            opacity: isDark ? 0 : 1,
-          }}
+          initial={{ pathLength: isDark ? 0 : 1, opacity: isDark ? 0 : 1 }}
+          animate={{ pathLength: isDark ? 0 : 1, opacity: isDark ? 0 : 1 }}
           transition={{ ease: "easeInOut", duration: 0.35 }}
           pathLength="1"
           fill="none"
           d="M14.6 27.1c0-3.4 0-6.8-.1-10.2-.2-1-1.1-1.7-2-1.7-1.2-.1-2.3 1-2.2 2.3.1 1 .9 1.9 2.1 2h7.2c1.1-.1 2-1 2.1-2 .1-1.2-1-2.3-2.2-2.3-.9 0-1.7.7-2 1.7 0 3.4 0 6.8-.1 10.2"
         />
         <motion.g
-          animate={{
-            scale: isDark ? 0.5 : 1,
-            opacity: isDark ? 0 : 1,
-          }}
+          initial={{ scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
+          animate={{ scale: isDark ? 0.5 : 1, opacity: isDark ? 0 : 1 }}
           transition={{ ease: "easeInOut", duration: 0.35 }}
         >
           <path pathLength="1" d="M16 6.4V1.3" />
@@ -392,31 +337,20 @@ export const ThemeToggleButton4 = ({
   );
 };
 
-//..................................................... //
-export const ThemeToggleButton5 = ({
-  className = "",
-}: {
-  className?: string;
-}) => {
-  const [isDark, setIsDark] = useState(false);
+export const ThemeToggleButton5 = ({ className = "" }: { className?: string }) => {
+  const { mounted, isDark, toggleTheme } = useThemeStatus();
+  if (!mounted) return <div className={cn("size-8", className)} />;
+
   return (
     <button
       type="button"
-      className={cn(
-        "rounded-full transition-all duration-300 active:scale-95",
-        isDark ? "bg-black text-white" : "bg-white text-black",
-        className,
-      )}
-      onClick={() => setIsDark(!isDark)}
+      className={cn("rounded-full transition-all duration-300 active:scale-95", isDark ? "bg-black text-white" : "bg-white text-black", className)}
+      onClick={toggleTheme}
     >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-        fill="currentColor"
-        viewBox="0 0 32 32"
-      >
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" fill="currentColor" viewBox="0 0 32 32">
         <clipPath id="skiper-btn-4">
           <motion.path
+            initial={{ y: isDark ? 5 : 0, x: isDark ? -20 : 0 }}
             animate={{ y: isDark ? 5 : 0, x: isDark ? -20 : 0 }}
             transition={{ ease: "easeInOut", duration: 0.35 }}
             d="M0-5h55v37h-55zm32 12a1 1 0 0025 0 1 1 0 00-25 0"
@@ -429,22 +363,3 @@ export const ThemeToggleButton5 = ({
     </button>
   );
 };
-
-/**
- * Theme Toggle Animations — React + Framer Motion Recreation
- * Inspired by and adapted from https://toggles.dev/ (Open Source CSS Theme Toggles by Alfie Jones)
- * This implementation is rebuilt in React and Framer Motion, avoiding external toggle packages.
- *
- * Attribution: https://toggles.dev/
- *
- * License & Usage:
- * - Free to use and modify in both personal and commercial projects.
- * - Attribution to Skiper UI is required when using the free version.
- * - No attribution required with Skiper UI Pro.
- *
- * Feedback and contributions are welcome.
- *
- * Author: @gurvinder-singh02
- * Website: https://gxuri.in
- * Twitter: https://x.com/Gur__vi
- */

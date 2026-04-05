@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import * as math from 'mathjs';
 
@@ -5,9 +6,9 @@ import './GradualBlur.css';
 
 const DEFAULT_CONFIG = {
   position: 'bottom',
-  strength: 2,
+  strength: 1,
   height: '6rem',
-  divCount: 5,
+  divCount: 2,
   exponential: false,
   zIndex: 1000,
   animated: false,

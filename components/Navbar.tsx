@@ -14,17 +14,19 @@ const navLinks = [
   { name: "Contact", link: "/contact" }
 ];
 
+import { Menu, X } from "lucide-react";
+
 const Navbar = () => {
   const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Framer Motion scroll tracking
   const { scrollY } = useScroll();
-  const width = useTransform(scrollY, [0, 200], ["100%", "60%"]); // shrink effect
-  const blur = useTransform(scrollY, [0, 200], [0, 20]);          // blur effect
-  const bgOpacity = useTransform(scrollY, [0, 200], [0, 1]);      // full opacity on scroll for solid background
+  const width = useTransform(scrollY, [0, 200], ["100%", "70%"]); // shrink effect
+  const blur = useTransform(scrollY, [0, 200], [0, 10]);          // blur effect
+  const bgOpacity = useTransform(scrollY, [0, 200], [0, 0.8]);      // background opacity
 
-  // Background color tied to theme (changes automatically with CSS variables updated by theme toggle)
   const backgroundColor = useMotionTemplate`hsl(var(--background) / ${bgOpacity})`;
 
   useEffect(() => {
@@ -36,7 +38,7 @@ const Navbar = () => {
       initial={{ y: -100, opacity: 0 }}
       animate={isVisible ? { y: 0, opacity: 1 } : {}}
       transition={{ duration: 0.7, ease: "easeOut" }}
-      className="sticky left-0 right-0 top-0 z-50 w-full px-0 py-4 text-primary pointer-events-none"
+      className="fixed left-1/2 -translate-x-1/2 top-0 z-50 w-full max-w-7xl px-4 md:px-14 lg:px-18 py-4 text-primary pointer-events-none"
     >
       <motion.nav
         style={{ 
@@ -44,23 +46,24 @@ const Navbar = () => {
           backdropFilter: useMotionTemplate`blur(${blur}px)`, 
           backgroundColor 
         }}
-        className="mx-auto flex items-center justify-between gap-6 rounded-full px-4 py-3 sm:px-6 sm:pr-4 pointer-events-auto transition-all duration-500 ease-in-out"
+        className="mx-auto flex items-center justify-between gap-6 rounded-full px-6 py-3 pointer-events-auto transition-all duration-500 ease-in-out border border-white/10 shadow-lg"
       >
-        <div className="text-lg font-sans">VNP</div>
+        <div className="text-xl font-bold font-sans tracking-tight">VNP</div>
 
-        <div className="navbar flex justify-center px-3">
-          <ul>
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-2">
+          <ul className="flex items-center gap-1">
             {navLinks.map((link, index) => (
               <li
                 key={link.name}
-                className="inline-block px-3 py-2 text-sm font-sans hover:underline underline-offset-4"
+                className="px-3 py-2 text-sm font-medium hover:text-highlight transition-colors"
               >
                 <Link href={link.link} className="flex items-center gap-2">
                   {pathname === link.link && (
-                    <span className="relative flex size-1.5">
-                      <span className="absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75 animate-ping-once"></span>
-                      <span className="relative inline-flex size-1.5 rounded-full bg-sky-500"></span>
-                    </span>
+                    <motion.span 
+                      layoutId="nav-active"
+                      className="size-1.5 rounded-full bg-highlight"
+                    />
                   )}
                   <TextRoll key={index}>{link.name}</TextRoll>
                 </Link>
@@ -69,8 +72,40 @@ const Navbar = () => {
           </ul>
         </div>
 
-        <ThemeToggleButton2 className="h-7 w-7" />
+        <div className="flex items-center gap-3">
+          <ThemeToggleButton2 className="h-8 w-8" />
+          
+          {/* Mobile Menu Toggle */}
+          <button 
+            className="md:hidden p-2 text-primary focus:outline-none"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      <motion.div
+        initial={false}
+        animate={isMobileMenuOpen ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+        className={`md:hidden absolute top-20 left-4 right-4 bg-background/95 backdrop-blur-md rounded-3xl p-6 border border-white/10 shadow-2xl pointer-events-auto ${isMobileMenuOpen ? 'block' : 'hidden'}`}
+      >
+        <ul className="flex flex-col gap-4">
+          {navLinks.map((link) => (
+            <li key={link.name}>
+              <Link 
+                href={link.link} 
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`text-2xl font-semibold flex items-center justify-between ${pathname === link.link ? 'text-highlight' : 'text-primary/70'}`}
+              >
+                {link.name}
+                {pathname === link.link && <span className="size-2 rounded-full bg-highlight" />}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
     </motion.header>
   )
 }

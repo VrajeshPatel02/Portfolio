@@ -49,8 +49,8 @@ const Hero = () => {
         </div>
 
         {/* Headline */}
-        <h1 className="font-sans-bold text-7xl">
-          Crafting <span className="text-highlight">purpose driven<br /> experiences</span> that inspire<br /> & engage.
+        <h1 className="font-sans-bold text-4xl md:text-7xl leading-tight">
+          Crafting <span className="text-highlight">purpose driven<br className="hidden md:block" /> experiences</span> that inspire<br className="hidden md:block" /> & engage.
         </h1>
 
         {/* Description with divider */}

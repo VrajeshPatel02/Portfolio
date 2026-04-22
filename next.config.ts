@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
     },{
       protocol: 'https',
       hostname: 'shadcnblocks.com'
+    },{
+      protocol: 'https',
+      hostname: 'picsum.photos'
     }]
   },
 };

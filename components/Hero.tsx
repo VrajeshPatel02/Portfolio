@@ -3,7 +3,7 @@ import React from 'react';
 import { Hand, ArrowUpRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from "next/link";
-
+import { HoverButton } from "@/components/ui/hover-button";
 const socials = [
   {
     name: "linkedin",
@@ -80,9 +80,9 @@ const Hero = () => {
           </div>
 
           {/* button (right side) */}
-          <button className="px-10 py-3 rounded-full border border-gray-400 text-md text-foreground hover:bg-foreground hover:text-background transition">
+          <HoverButton>
             Know me better
-          </button>
+          </HoverButton>
         </div>
       </div>
     </section>
